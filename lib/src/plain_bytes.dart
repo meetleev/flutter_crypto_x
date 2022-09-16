@@ -8,7 +8,8 @@ class PlainBytes {
   PlainBytes(this.bytes);
 
   /// create plainBytes from String
-  PlainBytes.fromString(String value) : bytes = Uint8List.fromList(convert.utf8.encode(value));
+  PlainBytes.fromString(String value)
+      : bytes = Uint8List.fromList(convert.utf8.encode(value));
 
   @override
   toString() => convert.utf8.decode(bytes, allowMalformed: true);
