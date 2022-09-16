@@ -2,7 +2,7 @@ name: crypto_x
 description: Advanced RSA based on pointycastle
 version: 0.0.1
 homepage: https://github.com/GLeeWei
-repository: https://github.com/GLeeWei/crypto_x
+repository: https://github.com/GLeeWei/flutter_crypto_x
 
 environment:
   sdk: '>=2.18.0 <3.0.0'
