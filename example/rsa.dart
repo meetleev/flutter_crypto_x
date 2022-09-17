@@ -11,14 +11,14 @@ class RSATest {
 
   privateEncryptToPublicDecrypt(String value) {
     CryptoSignature signature =
-        privateRSA.encrypt(PlainBytes.fromString(value), usePublic: false);
+        privateRSA.encrypt(PlainBytes.fromUTF8(value), usePublic: false);
     print('privateEncryptToPublicDecrypt:signature=[${signature.base64}]');
     PlainBytes plainBytes = publicRSA.decrypt(signature);
     print('privateEncryptToPublicDecrypt:plain=[${plainBytes.toString()}]');
   }
 
   publicEncryptToPrivateDecrypt(String value) {
-    CryptoSignature signature = publicRSA.encrypt(PlainBytes.fromString(value));
+    CryptoSignature signature = publicRSA.encrypt(PlainBytes.fromUTF8(value));
     print('publicEncryptToPrivateDecrypt:signature=[${signature.base64}]');
     PlainBytes plainBytes = privateRSA.decrypt(signature, usePublic: false);
     print('publicEncryptToPrivateDecrypt:plain=[${plainBytes.toString()}]');

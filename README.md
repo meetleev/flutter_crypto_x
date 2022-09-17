@@ -2,7 +2,7 @@
 [![Pub](https://img.shields.io/pub/v/crypto_x.svg?style=flat-square)](https://pub.dev/packages/crypto_x)
 [![support](https://img.shields.io/badge/platform-android%20|%20ios%20|%20web%20|%20macos%20|%20windows%20|%20linux%20-blue.svg)](https://pub.dev/packages/crypto_x)
 
-Advanced RSA based on pointycastle.
+A Dart library for encryption and decryption. Advanced RSA based on pointycastle.
 
 ## Features
 
@@ -25,7 +25,7 @@ dependencies:
         privateKey: 'privatePKCS8Key');
     var publicRSA = RSA(
         publicKey: 'publicPKCS8Key');
-    CryptoSignature signature = privateRSA.encrypt(PlainBytes.fromString('hello world'), usePublic: false);
+    CryptoSignature signature = privateRSA.encrypt(PlainBytes.fromUTF8('hello world'), usePublic: false);
     String ciphertext = signature.base64;
     PlainBytes plainBytes = publicRSA.decrypt(signature);
     String plainText = plainBytes.toString();

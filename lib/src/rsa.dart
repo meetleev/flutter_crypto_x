@@ -44,12 +44,10 @@ class RSA {
     String? privateKey,
     RSAEncoding encoding = RSAEncoding.pkcs1,
     RSADigest digest = RSADigest.sha1,
-  })  : publicKey = (publicKey ?? '').isNotEmpty
-            ? RSAKeyParser.parseFromString(publicKey!) as RSAPublicKey
-            : null,
-        privateKey = (privateKey ?? '').isNotEmpty
-            ? RSAKeyParser.parseFromString(privateKey!) as RSAPrivateKey
-            : null,
+  })  : publicKey =
+            (publicKey ?? '').isNotEmpty ? RSAKeyParser.parseFromString(publicKey!) as RSAPublicKey : null,
+        privateKey =
+            (privateKey ?? '').isNotEmpty ? RSAKeyParser.parseFromString(privateKey!) as RSAPrivateKey : null,
         _cipher = encoding == RSAEncoding.oaep
             ? digest == RSADigest.sha1
                 ? OAEPEncoding(RSAEngine())
@@ -59,11 +57,9 @@ class RSA {
   /// Encrypting data [PlainBytes], uses public key by default
   CryptoSignature encrypt(PlainBytes plainBytes, {bool usePublic = true}) {
     if (usePublic) {
-      assert(publicKey != null,
-          'Can\'t encrypt without a publicKey key, null given.');
+      assert(publicKey != null, 'Can\'t encrypt without a publicKey key, null given.');
     } else {
-      assert(privateKey != null,
-          'Can\'t encrypt without a private key, null given.');
+      assert(privateKey != null, 'Can\'t encrypt without a private key, null given.');
     }
     _cipher
       ..reset()
@@ -75,11 +71,9 @@ class RSA {
   /// Decrypting data [CryptoSignature], uses public key by default
   PlainBytes decrypt(CryptoSignature signature, {bool usePublic = true}) {
     if (usePublic) {
-      assert(publicKey != null,
-          'Can\'t encrypt without a publicKey key, null given.');
+      assert(publicKey != null, 'Can\'t encrypt without a publicKey key, null given.');
     } else {
-      assert(privateKey != null,
-          'Can\'t encrypt without a private key, null given.');
+      assert(privateKey != null, 'Can\'t encrypt without a private key, null given.');
     }
 
     _cipher
@@ -123,8 +117,7 @@ class RSAKeyParser {
 
   /// 0 modulus(n), 1 publicExponent(e)
   RSAAsymmetricKey _parsePublic(ASN1Sequence sequence) {
-    final List<ASN1Integer> asn1IntList =
-        sequence.elements!.cast<ASN1Integer>();
+    final List<ASN1Integer> asn1IntList = sequence.elements!.cast<ASN1Integer>();
     final modulus = asn1IntList.elementAt(0).integer;
     final exponent = asn1IntList.elementAt(1).integer;
     return RSAPublicKey(modulus!, exponent!);
@@ -133,8 +126,7 @@ class RSAKeyParser {
   /// 0 version, 1 modulus(n), 2 publicExponent(e), 3 privateExponent(d), 4 prime1(p), 5 prime2(q)
   /// 6 exponent1(d mod (p-1)), 7 exponent2 (d mod (q-1)), 8 coefficient
   RSAAsymmetricKey _parsePrivate(ASN1Sequence sequence) {
-    final List<ASN1Integer> asn1IntList =
-        sequence.elements!.cast<ASN1Integer>();
+    final List<ASN1Integer> asn1IntList = sequence.elements!.cast<ASN1Integer>();
     final modulus = asn1IntList.elementAt(1).integer;
     final exponent = asn1IntList.elementAt(3).integer;
     final p = asn1IntList.elementAt(4).integer;

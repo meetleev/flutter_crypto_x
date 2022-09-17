@@ -1,6 +1,6 @@
 name: crypto_x
-description: Advanced RSA based on pointycastle
-version: 0.0.1
+description: A Dart library for encryption and decryption. Advanced RSA based on pointycastle.
+version: 0.0.1+1
 homepage: https://github.com/GLeeWei
 repository: https://github.com/GLeeWei/flutter_crypto_x
 
