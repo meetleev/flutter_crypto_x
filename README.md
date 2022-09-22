@@ -2,7 +2,7 @@
 [![Pub](https://img.shields.io/pub/v/crypto_x.svg?style=flat-square)](https://pub.dev/packages/crypto_x)
 [![support](https://img.shields.io/badge/platform-android%20|%20ios%20|%20web%20|%20macos%20|%20windows%20|%20linux%20-blue.svg)](https://pub.dev/packages/crypto_x)
 
-A Dart library for encryption and decryption. Advanced RSA based on pointycastle.
+A Dart library for encryption and decryption. Advanced RSA, AES based on pointycastle.
 
 ## Features
 
