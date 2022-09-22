@@ -2,25 +2,24 @@ import 'package:crypto_x/crypto_x.dart';
 import 'package:flutter/services.dart';
 
 class RSATest {
-  final RSA privateRSA, publicRSA;
+  final RSA rsa;
 
   RSATest({
-    required this.privateRSA,
-    required this.publicRSA,
+    required this.rsa,
   });
 
-  privateEncryptToPublicDecrypt(String value) {
-    CryptoSignature signature =
-        privateRSA.encrypt(PlainBytes.fromUTF8(value), usePublic: false);
-    print('privateEncryptToPublicDecrypt:signature=[${signature.base64}]');
-    PlainBytes plainBytes = publicRSA.decrypt(signature);
-    print('privateEncryptToPublicDecrypt:plain=[${plainBytes.toString()}]');
+  privateSignToPublicVerify(String value) {
+    // CryptoSignature signature =
+    //     rsa.encrypt(PlainBytes.fromUTF8(value), usePublic: false);
+    // print('privateSignToPublicVerify:signature=[${signature.base64}]');
+    // PlainBytes plainBytes = rsa.decrypt(signature);
+    // print('privateSignToPublicVerify:plain=[${plainBytes.toString()}]');
   }
 
   publicEncryptToPrivateDecrypt(String value) {
-    CryptoSignature signature = publicRSA.encrypt(PlainBytes.fromUTF8(value));
+    CryptoBytes signature = rsa.encrypt(CryptoBytes.fromUTF8(value));
     print('publicEncryptToPrivateDecrypt:signature=[${signature.base64}]');
-    PlainBytes plainBytes = privateRSA.decrypt(signature, usePublic: false);
+    CryptoBytes plainBytes = rsa.decrypt(signature);
     print('publicEncryptToPrivateDecrypt:plain=[${plainBytes.toString()}]');
   }
 }
@@ -48,23 +47,20 @@ class Test {
       RSAKeyFormat publicRSAKeyFormat = RSAKeyFormat.pkcs1,
       RSAEncoding encoding = RSAEncoding.pkcs1}) {
     print('----_rasTest--encoding:[$encoding]----');
-    var privatePKCS1 = RSA(
-        privateKey: RSAKeyFormat.pkcs1 == privateRSAKeyFormat
+    var rsa = RSA.fromKeyPairString(
+        privateKeyPem: RSAKeyFormat.pkcs1 == privateRSAKeyFormat
             ? _privatePKCS1Key
             : _privatePKCS8Key,
-        encoding: encoding);
-    var publicPKCS1 = RSA(
-        publicKey: RSAKeyFormat.pkcs1 == publicRSAKeyFormat
+        publicKeyPem: RSAKeyFormat.pkcs1 == publicRSAKeyFormat
             ? _publicPKCS1Key
             : _publicPKCS8Key,
         encoding: encoding);
     var rSATest = RSATest(
-      privateRSA: privatePKCS1,
-      publicRSA: publicPKCS1,
+      rsa: rsa,
     );
     rSATest.publicEncryptToPrivateDecrypt(
         'public $encoding:[$publicRSAKeyFormat]=>[$privateRSAKeyFormat]');
-    rSATest.privateEncryptToPublicDecrypt(
+    rSATest.privateSignToPublicVerify(
         'private $encoding:[$privateRSAKeyFormat]=>[$publicRSAKeyFormat]');
   }
 

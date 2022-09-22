@@ -1,3 +1,8 @@
-## 0.0.1+1
+## 0.0.2
+
+* Generate RSA KeyPairs and import to pem format.
+* Supports AES. CBC、CFB-8、CFB-128、ECB、OFB-128、CTR.
+
+## 0.0.1
 
 * initial release.

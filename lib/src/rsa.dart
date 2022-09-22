@@ -1,18 +1,18 @@
 import 'dart:typed_data';
 import 'dart:convert' as convert;
 
+import 'package:crypto_x/src/crypto_secure_random.dart';
 import 'package:pointycastle/api.dart';
-import 'package:pointycastle/asn1/asn1_object.dart';
-import 'package:pointycastle/asn1/asn1_parser.dart';
-import 'package:pointycastle/asn1/primitives/asn1_integer.dart';
-import 'package:pointycastle/asn1/primitives/asn1_sequence.dart';
+import 'package:pointycastle/asn1.dart';
 import 'package:pointycastle/asymmetric/api.dart';
 import 'package:pointycastle/asymmetric/oaep.dart';
 import 'package:pointycastle/asymmetric/pkcs1.dart';
 import 'package:pointycastle/asymmetric/rsa.dart';
+import 'package:pointycastle/key_generators/api.dart';
+import 'package:pointycastle/key_generators/rsa_key_generator.dart';
 
-import 'plain_bytes.dart';
-import 'crypto_signature.dart';
+import 'algorithm.dart';
+import 'crypto_bytes.dart';
 
 enum RSAEncoding {
   pkcs1,
@@ -24,12 +24,12 @@ enum RSADigest {
   sha256,
 }
 
-class RSA {
+class RSA implements RSAAlgorithm {
   /// publicKey
-  final RSAPublicKey? publicKey;
+  RSAPublicKey? publicKey;
 
   /// privateKey
-  final RSAPrivateKey? privateKey;
+  RSAPrivateKey? privateKey;
 
   PublicKeyParameter<RSAPublicKey>? get _publicKeyParams =>
       publicKey != null ? PublicKeyParameter(publicKey!) : null;
@@ -40,47 +40,58 @@ class RSA {
 
   /// encoding, uses [RSAEncoding.pkcs1] by default
   RSA({
-    String? publicKey,
-    String? privateKey,
+    this.publicKey,
+    this.privateKey,
     RSAEncoding encoding = RSAEncoding.pkcs1,
     RSADigest digest = RSADigest.sha1,
-  })  : publicKey =
-            (publicKey ?? '').isNotEmpty ? RSAKeyParser.parseFromString(publicKey!) as RSAPublicKey : null,
-        privateKey =
-            (privateKey ?? '').isNotEmpty ? RSAKeyParser.parseFromString(privateKey!) as RSAPrivateKey : null,
-        _cipher = encoding == RSAEncoding.oaep
+  }) : _cipher = encoding == RSAEncoding.oaep
             ? digest == RSADigest.sha1
                 ? OAEPEncoding(RSAEngine())
                 : OAEPEncoding.withSHA256(RSAEngine())
             : PKCS1Encoding(RSAEngine());
 
-  /// Encrypting data [PlainBytes], uses public key by default
-  CryptoSignature encrypt(PlainBytes plainBytes, {bool usePublic = true}) {
-    if (usePublic) {
-      assert(publicKey != null, 'Can\'t encrypt without a publicKey key, null given.');
-    } else {
-      assert(privateKey != null, 'Can\'t encrypt without a private key, null given.');
-    }
+  /// create [RSA] fromKeyPairString
+  factory RSA.fromKeyPairString({
+    String? publicKeyPem,
+    String? privateKeyPem,
+    RSAEncoding encoding = RSAEncoding.pkcs1,
+    RSADigest digest = RSADigest.sha1,
+  }) =>
+      RSA(
+          publicKey: (publicKeyPem ?? '').isNotEmpty
+              ? RSAKeyParser.parseFromString(publicKeyPem!) as RSAPublicKey
+              : null,
+          privateKey: (publicKeyPem ?? '').isNotEmpty
+              ? RSAKeyParser.parseFromString(publicKeyPem!) as RSAPrivateKey
+              : null,
+          encoding: encoding,
+          digest: digest);
+
+  /// Encrypting data [PlainBytes]
+  @override
+  CryptoBytes encrypt(CryptoBytes plainBytes, {RSAPublicKey? key}) {
+    if (null != key) publicKey = key;
+    assert(publicKey != null,
+        'Can\'t encrypt without a publicKey key, null given.');
     _cipher
       ..reset()
-      ..init(true, usePublic ? _publicKeyParams! : _privateKeyParams!);
+      ..init(true, _publicKeyParams!);
 
-    return CryptoSignature(_cipher.process(plainBytes.bytes));
+    return CryptoBytes(_cipher.process(plainBytes.bytes));
   }
 
-  /// Decrypting data [CryptoSignature], uses public key by default
-  PlainBytes decrypt(CryptoSignature signature, {bool usePublic = true}) {
-    if (usePublic) {
-      assert(publicKey != null, 'Can\'t encrypt without a publicKey key, null given.');
-    } else {
-      assert(privateKey != null, 'Can\'t encrypt without a private key, null given.');
-    }
+  /// Decrypting data [CryptoSignature]
+  @override
+  CryptoBytes decrypt(CryptoBytes signature, {RSAPrivateKey? key}) {
+    if (null != key) privateKey = key;
+    assert(privateKey != null,
+        'Can\'t encrypt without a private key, null given.');
 
     _cipher
       ..reset()
-      ..init(false, usePublic ? _publicKeyParams! : _privateKeyParams!);
+      ..init(false, _privateKeyParams!);
 
-    return PlainBytes(_cipher.process(signature.bytes));
+    return CryptoBytes(_cipher.process(signature.bytes));
   }
 }
 
@@ -117,7 +128,8 @@ class RSAKeyParser {
 
   /// 0 modulus(n), 1 publicExponent(e)
   RSAAsymmetricKey _parsePublic(ASN1Sequence sequence) {
-    final List<ASN1Integer> asn1IntList = sequence.elements!.cast<ASN1Integer>();
+    final List<ASN1Integer> asn1IntList =
+        sequence.elements!.cast<ASN1Integer>();
     final modulus = asn1IntList.elementAt(0).integer;
     final exponent = asn1IntList.elementAt(1).integer;
     return RSAPublicKey(modulus!, exponent!);
@@ -126,7 +138,8 @@ class RSAKeyParser {
   /// 0 version, 1 modulus(n), 2 publicExponent(e), 3 privateExponent(d), 4 prime1(p), 5 prime2(q)
   /// 6 exponent1(d mod (p-1)), 7 exponent2 (d mod (q-1)), 8 coefficient
   RSAAsymmetricKey _parsePrivate(ASN1Sequence sequence) {
-    final List<ASN1Integer> asn1IntList = sequence.elements!.cast<ASN1Integer>();
+    final List<ASN1Integer> asn1IntList =
+        sequence.elements!.cast<ASN1Integer>();
     final modulus = asn1IntList.elementAt(1).integer;
     final exponent = asn1IntList.elementAt(3).integer;
     final p = asn1IntList.elementAt(4).integer;
@@ -161,5 +174,59 @@ class RSAKeyParser {
     final parser = ASN1Parser(bytes);
 
     return parser.nextObject() as ASN1Sequence;
+  }
+}
+
+class RSAKeyPair<B extends RSAPublicKey, V extends RSAPrivateKey>
+    extends AsymmetricKeyPair<B, V> {
+  RSAKeyPair(super.publicKey, super.privateKey);
+
+  /// export private key to PEM Format
+  /// returns a base64 encoded [String] with standard PEM headers and footers
+  exportPrivateKey() {
+    var topLevel = ASN1Sequence();
+    topLevel.add(ASN1Integer(BigInt.zero));
+    topLevel.add(ASN1Integer(privateKey.n));
+    topLevel.add(ASN1Integer(privateKey.publicExponent));
+    topLevel.add(ASN1Integer(privateKey.privateExponent));
+    topLevel.add(ASN1Integer(privateKey.p));
+    topLevel.add(ASN1Integer(privateKey.q));
+    var dp = privateKey.privateExponent! % (privateKey.p! - BigInt.one);
+    topLevel.add(ASN1Integer(dp));
+    var dq = privateKey.privateExponent! % (privateKey.q! - BigInt.one);
+    topLevel.add(ASN1Integer(dq));
+    var iQ = privateKey.q!.modInverse(privateKey.p!);
+    topLevel.add(ASN1Integer(iQ));
+    var dataBase64 = convert.base64.encode(topLevel.encode());
+    return '-----BEGIN RSA PRIVATE KEY-----\r$dataBase64\r-----END RSA PRIVATE KEY-----';
+  }
+
+  /// export public key to PEM Format
+  /// returns a base64 encoded [String] with standard PEM headers and footers
+  exportPublicKey() {
+    var topLevel = ASN1Sequence();
+    topLevel.add(ASN1Integer(publicKey.modulus));
+    topLevel.add(ASN1Integer(publicKey.publicExponent));
+    var dataBase64 = convert.base64.encode(topLevel.encode());
+    return '-----BEGIN RSA PUBLIC KEY-----\r$dataBase64\r-----END RSA PUBLIC KEY-----';
+  }
+}
+
+class KeyPairsGenerator {
+  /// generateRSAKeyPairs
+  static RSAKeyPair generateRSAKeyPairs({int bitLength = 2048}) {
+    final keyGen = RSAKeyGenerator();
+    final secureRandom = SecureRandom('Fortuna')
+      ..seed(KeyParameter(CryptoSecureRandom(32).bytes));
+    keyGen.init(ParametersWithRandom(
+        RSAKeyGeneratorParameters(BigInt.parse('65537'), bitLength, 64),
+        secureRandom));
+
+    // Use the generator
+    final pair = keyGen.generateKeyPair();
+    // Cast the generated key pair into the RSA key types
+    final myPublic = pair.publicKey as RSAPublicKey;
+    final myPrivate = pair.privateKey as RSAPrivateKey;
+    return RSAKeyPair<RSAPublicKey, RSAPrivateKey>(myPublic, myPrivate);
   }
 }

@@ -7,7 +7,7 @@ A Dart library for encryption and decryption. Advanced RSA based on pointycastle
 ## Features
 
 * RSA with PKCS1 and OAEP encoding.
-* OAEP only supports encryption with public key and decryption with private key. For details, see [OAEPEncoding](https://github.com/bcgit/pc-dart/blob/master/lib/asymmetric/oaep.dart)
+* Generate RSA KeyPairs and import to pem format.
 
 ## Getting started
 
@@ -20,14 +20,35 @@ dependencies:
 
 ## Usage
 
+### AES
+
+#### Supported modes are:
+- CBC `AESMode.cbc`
+- CFB-8 `AESMode.cfb8`
+- CFB-128 `AESMode.cfb`
+- CTR `AESMode.ctr`
+- ECB `AESMode.ecb`
+- OFB-128 `AESMode.ofb`
+
+```dart
+    final key = CipherKey.fromUtf8('your key................');
+    final iv = CipherIV.fromLength(16);
+    var aes = AES(key: key, mode: AESMode.cbc);
+    CryptoBytes encrypted = aes.encrypt(CryptoBytes.fromUTF8('hello world.'), iv: iv);
+    String encryptedBase64 = decrypted.base64;
+    CryptoBytes decrypted = aes.decrypt(encrypted, iv: iv);
+    String plainText = decrypted.toString();
+```
+
+### RSA
 ```dart
     var privateRSA = RSA(
-        privateKey: 'privatePKCS8Key');
+        privateKey: privateKey);
     var publicRSA = RSA(
-        publicKey: 'publicPKCS8Key');
-    CryptoSignature signature = privateRSA.encrypt(PlainBytes.fromUTF8('hello world'), usePublic: false);
+        publicKey: publicKey);
+    CryptoBytes signature = publicRSA.encrypt(CryptoBytes.fromUTF8('hello world'));
     String ciphertext = signature.base64;
-    PlainBytes plainBytes = publicRSA.decrypt(signature);
+    CryptoBytes plainBytes = publicRSA.decrypt(signature);
     String plainText = plainBytes.toString();
 ```
 
