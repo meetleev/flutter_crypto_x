@@ -35,10 +35,10 @@ class CryptoBytes {
 class CipherIV extends CryptoBytes {
   CipherIV(super.bytes);
 
-  /// Creates an IV object from a Base64 string.
+  /// Creates an CipherIV object from a Base64 string.
   CipherIV.fromBase64(String base64) : super(convert.base64.decode(base64));
 
-  /// Creates an IV object from a UTF-8 string.
+  /// Creates an CipherIV object from a UTF-8 string.
   CipherIV.fromUTF8(String input)
       : super(Uint8List.fromList(convert.utf8.encode(input)));
 
