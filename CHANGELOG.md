@@ -1,3 +1,7 @@
+## 0.0.3
+
+* Supports sign and verify for RSA.
+
 ## 0.0.2
 
 * Generate RSA KeyPairs and import to pem format.

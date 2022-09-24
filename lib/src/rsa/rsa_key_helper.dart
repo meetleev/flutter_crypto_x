@@ -1,99 +1,16 @@
 import 'dart:typed_data';
 import 'dart:convert' as convert;
 
-import 'package:crypto_x/src/crypto_secure_random.dart';
 import 'package:pointycastle/api.dart';
-import 'package:pointycastle/asn1.dart';
+import 'package:pointycastle/asn1/asn1_object.dart';
+import 'package:pointycastle/asn1/asn1_parser.dart';
+import 'package:pointycastle/asn1/primitives/asn1_integer.dart';
+import 'package:pointycastle/asn1/primitives/asn1_sequence.dart';
 import 'package:pointycastle/asymmetric/api.dart';
-import 'package:pointycastle/asymmetric/oaep.dart';
-import 'package:pointycastle/asymmetric/pkcs1.dart';
-import 'package:pointycastle/asymmetric/rsa.dart';
 import 'package:pointycastle/key_generators/api.dart';
 import 'package:pointycastle/key_generators/rsa_key_generator.dart';
 
-import 'algorithm.dart';
-import 'crypto_bytes.dart';
-
-enum RSAEncoding {
-  pkcs1,
-  oaep,
-}
-
-enum RSADigest {
-  sha1,
-  sha256,
-}
-
-class RSA implements RSAAlgorithm {
-  /// publicKey
-  RSAPublicKey? publicKey;
-
-  /// privateKey
-  RSAPrivateKey? privateKey;
-
-  PublicKeyParameter<RSAPublicKey>? get _publicKeyParams =>
-      publicKey != null ? PublicKeyParameter(publicKey!) : null;
-
-  PrivateKeyParameter<RSAPrivateKey>? get _privateKeyParams =>
-      privateKey != null ? PrivateKeyParameter(privateKey!) : null;
-  final AsymmetricBlockCipher _cipher;
-
-  /// encoding, uses [RSAEncoding.pkcs1] by default
-  RSA({
-    this.publicKey,
-    this.privateKey,
-    RSAEncoding encoding = RSAEncoding.pkcs1,
-    RSADigest digest = RSADigest.sha1,
-  }) : _cipher = encoding == RSAEncoding.oaep
-            ? digest == RSADigest.sha1
-                ? OAEPEncoding(RSAEngine())
-                : OAEPEncoding.withSHA256(RSAEngine())
-            : PKCS1Encoding(RSAEngine());
-
-  /// create [RSA] fromKeyPairString
-  factory RSA.fromKeyPairString({
-    String? publicKeyPem,
-    String? privateKeyPem,
-    RSAEncoding encoding = RSAEncoding.pkcs1,
-    RSADigest digest = RSADigest.sha1,
-  }) =>
-      RSA(
-          publicKey: (publicKeyPem ?? '').isNotEmpty
-              ? RSAKeyParser.parseFromString(publicKeyPem!) as RSAPublicKey
-              : null,
-          privateKey: (publicKeyPem ?? '').isNotEmpty
-              ? RSAKeyParser.parseFromString(publicKeyPem!) as RSAPrivateKey
-              : null,
-          encoding: encoding,
-          digest: digest);
-
-  /// Encrypting data [PlainBytes]
-  @override
-  CryptoBytes encrypt(CryptoBytes plainBytes, {RSAPublicKey? key}) {
-    if (null != key) publicKey = key;
-    assert(publicKey != null,
-        'Can\'t encrypt without a publicKey key, null given.');
-    _cipher
-      ..reset()
-      ..init(true, _publicKeyParams!);
-
-    return CryptoBytes(_cipher.process(plainBytes.bytes));
-  }
-
-  /// Decrypting data [CryptoSignature]
-  @override
-  CryptoBytes decrypt(CryptoBytes signature, {RSAPrivateKey? key}) {
-    if (null != key) privateKey = key;
-    assert(privateKey != null,
-        'Can\'t encrypt without a private key, null given.');
-
-    _cipher
-      ..reset()
-      ..init(false, _privateKeyParams!);
-
-    return CryptoBytes(_cipher.process(signature.bytes));
-  }
-}
+import '../crypto_secure_random.dart';
 
 /// RSA PEM parser.
 class RSAKeyParser {

@@ -9,8 +9,8 @@ import 'mode/cfb128.dart';
 import 'mode/ofb128.dart';
 
 enum AESMode {
-  cbc, // p
-  ecb, // p
+  cbc,
+  ecb,
 
   /// cfb 8bit
   cfb8,
@@ -110,7 +110,10 @@ class AES extends AESAlgorithm {
     _cipher!
       ..reset()
       ..init(false, _buildCipherParam(iv!, associatedData: associatedData));
-    if (null != padding) return CryptoBytes(_cipher!.process(encrypted.bytes));
+
+    if (null != padding) {
+      return CryptoBytes(_cipher!.process(encrypted.bytes));
+    }
     return CryptoBytes(_processBlocks(_cipher!, encrypted.bytes));
   }
 

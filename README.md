@@ -41,6 +41,7 @@ dependencies:
 ```
 
 ### RSA
+* encrypt and decrypt
 ```dart
     var privateRSA = RSA(
         privateKey: privateKey);
@@ -50,6 +51,14 @@ dependencies:
     String ciphertext = signature.base64;
     CryptoBytes plainBytes = publicRSA.decrypt(signature);
     String plainText = plainBytes.toString();
+```
+
+* sign and verify
+```dart
+    var rsaSigner = RSASigner(digestType = DigestType.sha256, privateKey: privateKey, publicKey: publicKey);
+    var plainBytes = CryptoBytes.fromUTF8('hello world');
+    CryptoBytes signature = rsaSigner.sign(plainBytes);
+    bool isSame = rsaSigner.verify(signature, plainBytes);
 ```
 
 [comment]: <> (## Additional information)

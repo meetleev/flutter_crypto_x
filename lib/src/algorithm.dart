@@ -22,3 +22,13 @@ abstract class RSAAlgorithm {
   /// Decrypt [encrypted] value.
   CryptoBytes decrypt(CryptoBytes encrypted, {RSAPrivateKey? key});
 }
+
+/// Interface for the SignerAlgorithm.
+abstract class SignerAlgorithm {
+  /// sign [plainBytes].
+  CryptoBytes sign(CryptoBytes plainBytes, {RSAPrivateKey? key});
+
+  /// verify encrypted [signature].
+  bool verify(CryptoBytes signature, CryptoBytes plainBytes,
+      {RSAPublicKey? key});
+}
