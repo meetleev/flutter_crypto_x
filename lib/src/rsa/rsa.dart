@@ -15,11 +15,6 @@ enum RSAEncoding {
   oaep,
 }
 
-enum RSADigest {
-  sha1,
-  sha256,
-}
-
 class _BaseRSA {
   /// publicKey
   RSAPublicKey? publicKey;
@@ -38,11 +33,10 @@ class _BaseRSA {
     this.publicKey,
     this.privateKey,
     RSAEncoding encoding = RSAEncoding.pkcs1,
-    RSADigest digest = RSADigest.sha1,
+    DigestType oaepDigestType = DigestType.sha1,
   }) : _cipher = encoding == RSAEncoding.oaep
-            ? digest == RSADigest.sha1
-                ? OAEPEncoding(RSAEngine())
-                : OAEPEncoding.withSHA256(RSAEngine())
+            ? OAEPEncoding.withCustomDigest(
+                () => Digest(_digestNames[oaepDigestType]!), RSAEngine())
             : PKCS1Encoding(RSAEngine());
 }
 
@@ -52,19 +46,19 @@ class RSA extends _BaseRSA implements RSAAlgorithm {
     RSAPublicKey? publicKey,
     RSAPrivateKey? privateKey,
     RSAEncoding encoding = RSAEncoding.pkcs1,
-    RSADigest digest = RSADigest.sha1,
+    DigestType oaepDigestType = DigestType.sha1,
   }) : super(
             publicKey: publicKey,
             privateKey: privateKey,
             encoding: encoding,
-            digest: digest);
+            oaepDigestType: oaepDigestType);
 
   /// create [RSA] fromKeyPairString
   factory RSA.fromKeyPairString({
     String? publicKeyPem,
     String? privateKeyPem,
     RSAEncoding encoding = RSAEncoding.pkcs1,
-    RSADigest digest = RSADigest.sha1,
+    DigestType oaepDigestType = DigestType.sha1,
   }) =>
       RSA(
           publicKey: (publicKeyPem ?? '').isNotEmpty
@@ -74,7 +68,7 @@ class RSA extends _BaseRSA implements RSAAlgorithm {
               ? RSAKeyParser.parseFromString(publicKeyPem!) as RSAPrivateKey
               : null,
           encoding: encoding,
-          digest: digest);
+          oaepDigestType: oaepDigestType);
 
   /// Encrypting data [PlainBytes]
   @override
