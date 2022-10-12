@@ -1,8 +1,8 @@
 name: crypto_x
 description: A Dart library for encryption and decryption. Advanced RSA, AES based on pointycastle.
-version: 0.0.3
-homepage: https://github.com/GLeeWei
-repository: https://github.com/GLeeWei/flutter_crypto_x
+version: 0.0.3+1
+homepage: https://github.com/meetleev
+repository: https://github.com/meetleev/flutter_crypto_x
 
 environment:
   sdk: '>=2.18.0 <3.0.0'
