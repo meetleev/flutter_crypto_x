@@ -233,7 +233,6 @@ class RSASigner extends _BaseRSA implements SignerAlgorithm {
         }
       }
       return true; //return Arrays.constantTimeAreEqual(sig, expected);
-
     } else if (sig.length == expected.length - 2) {
       // NULL left out
       var sigOffset = sig.length - hash.length - 2;

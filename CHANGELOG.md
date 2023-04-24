@@ -1,3 +1,8 @@
+## 0.0.3+2
+
+* upgrade pointycastle to 3.7.3
+* Aligns Dart and Flutter SDK constraints.
+
 ## 0.0.3+1
 
 * update readme.md.
