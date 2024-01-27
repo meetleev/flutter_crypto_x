@@ -43,15 +43,11 @@ class _BaseRSA {
 class RSA extends _BaseRSA implements RSAAlgorithm {
   /// encoding, uses [RSAEncoding.pkcs1] by default
   RSA({
-    RSAPublicKey? publicKey,
-    RSAPrivateKey? privateKey,
-    RSAEncoding encoding = RSAEncoding.pkcs1,
-    DigestType oaepDigestType = DigestType.sha1,
-  }) : super(
-            publicKey: publicKey,
-            privateKey: privateKey,
-            encoding: encoding,
-            oaepDigestType: oaepDigestType);
+    super.publicKey,
+    super.privateKey,
+    super.encoding,
+    super.oaepDigestType,
+  });
 
   /// create [RSA] fromKeyPairString
   factory RSA.fromKeyPairString({
@@ -132,10 +128,9 @@ class RSASigner extends _BaseRSA implements SignerAlgorithm {
 
   RSASigner({
     DigestType digestType = DigestType.sha256,
-    RSAPublicKey? publicKey,
-    RSAPrivateKey? privateKey,
-  })  : _digest = Digest(_digestNames[digestType]!),
-        super(privateKey: privateKey, publicKey: publicKey) {
+    super.publicKey,
+    super.privateKey,
+  })  : _digest = Digest(_digestNames[digestType]!) {
     _digestIdentifier = _hexStringToBytes(_digestIdentifierHexes[digestType]!);
   }
 

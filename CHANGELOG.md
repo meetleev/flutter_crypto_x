@@ -1,3 +1,14 @@
+## 0.0.5
+
+* Aligns Dart and Flutter SDK constraints.
+* remove some warnings
+* upgrade pointycastle to 3.7.4
+
+## 0.0.4
+
+* upgrade crypto to 3.0.3
+* Aligns Dart and Flutter SDK constraints.
+
 ## 0.0.3+2
 
 * upgrade pointycastle to 3.7.3
