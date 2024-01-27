@@ -130,7 +130,7 @@ class RSASigner extends _BaseRSA implements SignerAlgorithm {
     DigestType digestType = DigestType.sha256,
     super.publicKey,
     super.privateKey,
-  })  : _digest = Digest(_digestNames[digestType]!) {
+  }) : _digest = Digest(_digestNames[digestType]!) {
     _digestIdentifier = _hexStringToBytes(_digestIdentifierHexes[digestType]!);
   }
 
