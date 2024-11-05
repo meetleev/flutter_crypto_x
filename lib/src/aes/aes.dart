@@ -77,20 +77,20 @@ class AES extends AESAlgorithm {
       {CipherIV? iv, Uint8List? associatedData}) {
     assert(null != iv, 'IV, null given.');
     if (null != _streamCipher) {
-      _streamCipher!
+      _streamCipher
         ..reset()
         ..init(true, _buildCipherParam(iv!, associatedData: associatedData));
-      return CryptoBytes(_streamCipher!.process(plainBytes.bytes));
+      return CryptoBytes(_streamCipher.process(plainBytes.bytes));
     }
     if (null == _cipher) {
       throw StateError('_cipher null.');
     }
 
-    _cipher!
+    _cipher
       ..reset()
       ..init(true, _buildCipherParam(iv!, associatedData: associatedData));
-    if (null != padding) return CryptoBytes(_cipher!.process(plainBytes.bytes));
-    return CryptoBytes(_processBlocks(_cipher!, plainBytes.bytes));
+    if (null != padding) return CryptoBytes(_cipher.process(plainBytes.bytes));
+    return CryptoBytes(_processBlocks(_cipher, plainBytes.bytes));
   }
 
   @override
@@ -98,23 +98,23 @@ class AES extends AESAlgorithm {
       {CipherIV? iv, Uint8List? associatedData}) {
     assert(null != iv, 'IV, null given.');
     if (null != _streamCipher) {
-      _streamCipher!
+      _streamCipher
         ..reset()
         ..init(false, _buildCipherParam(iv!, associatedData: associatedData));
-      return CryptoBytes(_streamCipher!.process(encrypted.bytes));
+      return CryptoBytes(_streamCipher.process(encrypted.bytes));
     }
     if (null == _cipher) {
       throw StateError('_cipher null.');
     }
 
-    _cipher!
+    _cipher
       ..reset()
       ..init(false, _buildCipherParam(iv!, associatedData: associatedData));
 
     if (null != padding) {
-      return CryptoBytes(_cipher!.process(encrypted.bytes));
+      return CryptoBytes(_cipher.process(encrypted.bytes));
     }
-    return CryptoBytes(_processBlocks(_cipher!, encrypted.bytes));
+    return CryptoBytes(_processBlocks(_cipher, encrypted.bytes));
   }
 
   Uint8List _processBlocks(BlockCipher cipher, Uint8List input) {

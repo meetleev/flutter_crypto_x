@@ -10,8 +10,8 @@ class OFB128BlockCipher extends BaseBlockCipher {
   final BlockCipher _aesEngineCipher;
 
   final Uint8List _iv;
-  final Uint8List? _ofbV;
-  final Uint8List? _ofbOutV;
+  final Uint8List _ofbV;
+  final Uint8List _ofbOutV;
 
   OFB128BlockCipher(this._aesEngineCipher)
       : _iv = Uint8List(_aesEngineCipher.blockSize),
@@ -24,7 +24,7 @@ class OFB128BlockCipher extends BaseBlockCipher {
 
   @override
   void reset() {
-    _ofbV!.setRange(0, _iv.length, _iv);
+    _ofbV.setRange(0, _iv.length, _iv);
     _aesEngineCipher.reset();
   }
 
@@ -63,17 +63,17 @@ class OFB128BlockCipher extends BaseBlockCipher {
       n = blockSize - (inpOff + blockSize - inp.length);
     }
 
-    _aesEngineCipher.processBlock(_ofbV!, 0, _ofbOutV!, 0);
+    _aesEngineCipher.processBlock(_ofbV, 0, _ofbOutV, 0);
 
     // XOR the ofbV with the plaintext producing the cipher text (and the next input block).
     for (var i = 0; i < n; i++) {
-      out[outOff + i] = _ofbOutV![i] ^ inp[inpOff + i];
+      out[outOff + i] = _ofbOutV[i] ^ inp[inpOff + i];
     }
 
     // change over the input block.
-    var offset = _ofbV!.length - blockSize;
-    _ofbV!.setRange(0, offset, _ofbV!.sublist(blockSize));
-    _ofbV!.setRange(offset, _ofbV!.length, _ofbOutV!);
+    var offset = _ofbV.length - blockSize;
+    _ofbV.setRange(0, offset, _ofbV.sublist(blockSize));
+    _ofbV.setRange(offset, _ofbV.length, _ofbOutV);
 
     return n;
   }

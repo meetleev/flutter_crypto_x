@@ -11,8 +11,8 @@ class CFB128BlockCipher extends BaseBlockCipher {
   final BlockCipher _aesEngineCipher;
 
   final Uint8List _iv;
-  final Uint8List? _cfbV;
-  final Uint8List? _cfbOutV;
+  final Uint8List _cfbV;
+  final Uint8List _cfbOutV;
   late bool _encrypting;
 
   CFB128BlockCipher(this._aesEngineCipher)
@@ -26,7 +26,7 @@ class CFB128BlockCipher extends BaseBlockCipher {
 
   @override
   void reset() {
-    _cfbV!.setRange(0, _iv.length, _iv);
+    _cfbV.setRange(0, _iv.length, _iv);
     _aesEngineCipher.reset();
   }
 
@@ -101,17 +101,17 @@ class CFB128BlockCipher extends BaseBlockCipher {
       n = blockSize - (inpOff + blockSize - inp.length);
     }
 
-    _aesEngineCipher.processBlock(_cfbV!, 0, _cfbOutV!, 0);
+    _aesEngineCipher.processBlock(_cfbV, 0, _cfbOutV, 0);
 
     // XOR the cfbV with the plaintext producing the ciphertext
     for (var i = 0; i < n; i++) {
-      out[outOff + i] = _cfbOutV![i] ^ inp[inpOff + i];
+      out[outOff + i] = _cfbOutV[i] ^ inp[inpOff + i];
     }
 
     // change over the input block.
-    var offset = _cfbV!.length - blockSize;
-    _cfbV!.setRange(0, offset, _cfbV!.sublist(blockSize));
-    _cfbV!.setRange(offset, n, out.sublist(outOff));
+    var offset = _cfbV.length - blockSize;
+    _cfbV.setRange(0, offset, _cfbV.sublist(blockSize));
+    _cfbV.setRange(offset, n, out.sublist(outOff));
 
     return n;
   }
@@ -132,16 +132,16 @@ class CFB128BlockCipher extends BaseBlockCipher {
       n = blockSize - (inpOff + blockSize - inp.length);
     }
 
-    _aesEngineCipher.processBlock(_cfbV!, 0, _cfbOutV!, 0);
+    _aesEngineCipher.processBlock(_cfbV, 0, _cfbOutV, 0);
 
     // change over the input block.
-    var offset = _cfbV!.length - blockSize;
-    _cfbV!.setRange(0, offset, _cfbV!.sublist(blockSize));
-    _cfbV!.setRange(offset, n, inp.sublist(inpOff));
+    var offset = _cfbV.length - blockSize;
+    _cfbV.setRange(0, offset, _cfbV.sublist(blockSize));
+    _cfbV.setRange(offset, n, inp.sublist(inpOff));
 
     // XOR the cfbV with the ciphertext producing the plaintext
     for (var i = 0; i < n; i++) {
-      out[outOff + i] = _cfbOutV![i] ^ inp[inpOff + i];
+      out[outOff + i] = _cfbOutV[i] ^ inp[inpOff + i];
     }
 
     return n;

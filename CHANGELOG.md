@@ -1,3 +1,9 @@
+## 0.0.6
+
+* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+* upgrade pointycastle to 3.9.1
+* remove unnecessary ! operator from some files
+  
 ## 0.0.5
 
 * Aligns Dart and Flutter SDK constraints.
