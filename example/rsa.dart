@@ -1,4 +1,5 @@
 import 'package:crypto_x/crypto_x.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class RSATest {
@@ -8,7 +9,7 @@ class RSATest {
     required this.rsa,
   });
 
-  privateSignToPublicVerify(String value) {
+  void privateSignToPublicVerify(String value) {
     // CryptoSignature signature =
     //     rsa.encrypt(PlainBytes.fromUTF8(value), usePublic: false);
     // print('privateSignToPublicVerify:signature=[${signature.base64}]');
@@ -16,11 +17,12 @@ class RSATest {
     // print('privateSignToPublicVerify:plain=[${plainBytes.toString()}]');
   }
 
-  publicEncryptToPrivateDecrypt(String value) {
+  void publicEncryptToPrivateDecrypt(String value) {
     CryptoBytes signature = rsa.encrypt(CryptoBytes.fromUTF8(value));
-    print('publicEncryptToPrivateDecrypt:signature=[${signature.base64}]');
+    debugPrint('publicEncryptToPrivateDecrypt:signature=[${signature.base64}]');
     CryptoBytes plainBytes = rsa.decrypt(signature);
-    print('publicEncryptToPrivateDecrypt:plain=[${plainBytes.toString()}]');
+    debugPrint(
+        'publicEncryptToPrivateDecrypt:plain=[${plainBytes.toString()}]');
   }
 }
 
@@ -46,7 +48,7 @@ class Test {
       {RSAKeyFormat privateRSAKeyFormat = RSAKeyFormat.pkcs1,
       RSAKeyFormat publicRSAKeyFormat = RSAKeyFormat.pkcs1,
       RSAEncoding encoding = RSAEncoding.pkcs1}) {
-    print('----_rasTest--encoding:[$encoding]----');
+    debugPrint('----_rasTest--encoding:[$encoding]----');
     var rsa = RSA.fromKeyPairString(
         privateKeyPem: RSAKeyFormat.pkcs1 == privateRSAKeyFormat
             ? _privatePKCS1Key

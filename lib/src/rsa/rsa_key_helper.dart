@@ -142,8 +142,8 @@ class KeyPairsGenerator {
     // Use the generator
     final pair = keyGen.generateKeyPair();
     // Cast the generated key pair into the RSA key types
-    final myPublic = pair.publicKey as RSAPublicKey;
-    final myPrivate = pair.privateKey as RSAPrivateKey;
+    final myPublic = pair.publicKey;
+    final myPrivate = pair.privateKey;
     return RSAKeyPair<RSAPublicKey, RSAPrivateKey>(myPublic, myPrivate);
   }
 }

@@ -1,4 +1,4 @@
-library crypto_x;
+library;
 
 export 'src/rsa/rsa.dart';
 export 'src/rsa/rsa_key_helper.dart';
