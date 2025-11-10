@@ -100,7 +100,7 @@ class RSAKeyPair<B extends RSAPublicKey, V extends RSAPrivateKey>
 
   /// export private key to PEM Format
   /// returns a base64 encoded [String] with standard PEM headers and footers
-  exportPrivateKey() {
+  String exportPrivateKey() {
     var topLevel = ASN1Sequence();
     topLevel.add(ASN1Integer(BigInt.zero));
     topLevel.add(ASN1Integer(privateKey.n));
@@ -120,7 +120,7 @@ class RSAKeyPair<B extends RSAPublicKey, V extends RSAPrivateKey>
 
   /// export public key to PEM Format
   /// returns a base64 encoded [String] with standard PEM headers and footers
-  exportPublicKey() {
+  String exportPublicKey() {
     var topLevel = ASN1Sequence();
     topLevel.add(ASN1Integer(publicKey.modulus));
     topLevel.add(ASN1Integer(publicKey.publicExponent));
