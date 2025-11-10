@@ -4,24 +4,24 @@
 
 ## 0.0.6
 
-* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
-* upgraded pointycastle to 3.9.1
-* removed unnecessary ! operator from some files
+* Updated minimum supported SDK version to Flutter 3.16/Dart 3.2.
+* Upgraded pointycastle to 3.9.1
+* Removed unnecessary ! operator from some files
   
 ## 0.0.5
 
 * Aligns Dart and Flutter SDK constraints.
-* removed some warnings
-* upgraded pointycastle to 3.7.4
+* Removed some warnings
+* Upgraded pointycastle to 3.7.4
 
 ## 0.0.4
 
-* upgraded crypto to 3.0.3
+* Upgraded crypto to 3.0.3
 * Aligns Dart and Flutter SDK constraints.
 
 ## 0.0.3+2
 
-* upgraded pointycastle to 3.7.3
+* Upgraded pointycastle to 3.7.3
 * Aligns Dart and Flutter SDK constraints.
 
 ## 0.0.3
